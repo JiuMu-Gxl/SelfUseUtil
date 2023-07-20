@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfUseUtil", "SelfUseUtil\SelfUseUtil.csproj", "{72BBA27F-254B-47B2-AB91-3ABDFD95A568}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfUseUtil", "SelfUseUtil\SelfUseUtil.csproj", "{72BBA27F-254B-47B2-AB91-3ABDFD95A568}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedisDemo", "RedisDemo\RedisDemo.csproj", "{AC288D07-BCEB-408E-8E25-4C3706224DF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpiderDemo", "SpiderDemo\SpiderDemo.csproj", "{76F5D8E9-B055-4EF3-B921-0F2B28E554A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{72BBA27F-254B-47B2-AB91-3ABDFD95A568}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72BBA27F-254B-47B2-AB91-3ABDFD95A568}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72BBA27F-254B-47B2-AB91-3ABDFD95A568}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC288D07-BCEB-408E-8E25-4C3706224DF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC288D07-BCEB-408E-8E25-4C3706224DF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC288D07-BCEB-408E-8E25-4C3706224DF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC288D07-BCEB-408E-8E25-4C3706224DF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76F5D8E9-B055-4EF3-B921-0F2B28E554A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76F5D8E9-B055-4EF3-B921-0F2B28E554A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76F5D8E9-B055-4EF3-B921-0F2B28E554A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76F5D8E9-B055-4EF3-B921-0F2B28E554A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

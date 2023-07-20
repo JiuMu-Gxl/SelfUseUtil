@@ -1,0 +1,15 @@
+﻿{
+  "profiles": {
+    "RedisDemo": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:5030;http://0.0.0.0:5030;",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Redis:Connection": "172.16.127.100:34188,defaultDatabase=14,connectTimeout=100000,syncTimeout=100000,connectRetry=50"
+      }
+    }
+  }
+}

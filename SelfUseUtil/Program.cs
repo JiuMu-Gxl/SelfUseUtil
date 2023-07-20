@@ -67,3 +67,16 @@ using System.Security.Policy;
 //}
 
 
+var body = new List<KeyValuePair<string, string>>
+{
+    new KeyValuePair<string, string>("grant_type", "client_credentials"),
+    new KeyValuePair<string, string>("client_id", "mqm"),
+    new KeyValuePair<string, string>("client_secret", "secret"),
+    new KeyValuePair<string, string>("scope", "mqm-api openid profile roles synyiiam")
+};
+var content = new FormUrlEncodedContent(body);
+
+Console.WriteLine($"content:{content}");
+
+
+
