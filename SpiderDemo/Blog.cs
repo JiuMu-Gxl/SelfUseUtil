@@ -12,5 +12,6 @@ namespace SpiderDemo
         public string Time { get; set; }
         public string Author { get; set; }
         public string ContentUrl { get; set; }
+        public string ImageUrl { get; set; }
     }
 }
