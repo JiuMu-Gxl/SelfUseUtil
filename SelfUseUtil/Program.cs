@@ -4,79 +4,55 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Security.Policy;
 
-//List<Task<string>> tasks = new List<Task<string>>();
-//Stopwatch stopwatch = Stopwatch.StartNew();
-//// 创建多个接口调用任务
-//for (int i = 1; i <= 10; i++)
-//{
-//    tasks.Add(CallApi(i));
-//}
+int times = 10000000;
+DynamicSample dynamicSample = new DynamicSample();
+var addMethod = typeof(DynamicSample).GetMethod("Add");
 
-//// 并行处理任务
-//string[] results = await Task.WhenAll(tasks);
-
-//// 处理结果
-//foreach (string result in results)
-//{
-//    Console.WriteLine(result);
-//}
-//stopwatch.Stop();
-//Console.WriteLine("总共耗时：" + stopwatch.ElapsedMilliseconds);
-
-
-//Stopwatch stopwatch = Stopwatch.StartNew();
-//List<int> numbers = new List<int>();
-
-//for (int i = 1; i <= 10000; i++)
-//{
-//    numbers.Add(i);
-//}
-
-//var result = new List<string>();
-//ParallelOptions parallelOptions = new ParallelOptions
-//{
-//    MaxDegreeOfParallelism = 10000000
-//};
-//// 并行处理集合中的每个元素
-//Parallel.ForEach(numbers, parallelOptions, async number =>
-//{
-//    Console.WriteLine("Processing number: " + number);
-//    var data = await CallApi(number);
-//    result.Add(data);
-//    Console.WriteLine("Processing complete for number: " + number);
-//});
-
-//Console.WriteLine("result行数" + result.Count);
-
-//foreach (var item in result)
-//{
-//    Console.WriteLine(item);
-//}
-//Console.WriteLine("All numbers processed.");
-//stopwatch.Stop();
-//Console.WriteLine("总共耗时：" + stopwatch.ElapsedMilliseconds);
-
-//Console.ReadLine();
-
-
-//static void CallApi(int count)
-//{
-//    Console.WriteLine($"当前行数：{count}");
-//    Task.Delay(1000).Wait(); // 模拟API调用
-//                             // 执行其他操作...
-//}
-
-
-var body = new List<KeyValuePair<string, string>>
+Stopwatch watch1 = Stopwatch.StartNew();
+int result = 0;
+for (int i = 0; i < times; i++)
 {
-    new KeyValuePair<string, string>("grant_type", "client_credentials"),
-    new KeyValuePair<string, string>("client_id", "mqm"),
-    new KeyValuePair<string, string>("client_secret", "secret"),
-    new KeyValuePair<string, string>("scope", "mqm-api openid profile roles synyiiam")
-};
-var content = new FormUrlEncodedContent(body);
+    result = (int)addMethod.Invoke(dynamicSample, new object[] { 1, 2 });
+}
+watch1.Stop();
+Console.WriteLine(string.Format("正常的反射耗时：{0}毫秒", watch1.ElapsedMilliseconds));
+//Console.WriteLine("正常反射的结果：" + result);
+/****************************************************************************************************/
 
-Console.WriteLine($"content:{content}");
+dynamic dynamicSample2 = new DynamicSample();
+int result2 = 0;
+watch1.Restart();
+for (int i = 0; i < times; i++)
+{
+    result2 = dynamicSample2.Add(1, 2);
+}
+watch1.Stop();
+Console.WriteLine(string.Format("Dynamic的反射耗时：{0}毫秒", watch1.ElapsedMilliseconds));
+//Console.WriteLine("Dynamic反射的结果：" + result2);
+/****************************************************************************************************/
+
+DynamicSample reflectSamplebetter = new DynamicSample();
+var addMethod2 = typeof(DynamicSample).GetMethod("Add");
+var delg = (Func<DynamicSample, int, int, int>)Delegate.CreateDelegate(typeof(Func<DynamicSample, int, int, int>), addMethod2);
+int result3 = 0;
+watch1.Restart();
+for (int i = 0; i < times; i++)
+{
+    result3 = delg(reflectSamplebetter, 1, 2);
+}
+watch1.Stop();
+Console.WriteLine(string.Format("优化的反射耗时：{0}毫秒", watch1.ElapsedMilliseconds));
+//Console.WriteLine("优化的反射结果：" + result3);
+/****************************************************************************************************/
+
+//Console.Read();
 
 
-
+class DynamicSample
+{
+    public string Name { get; set; }
+    public int Add(int a, int b)
+    {
+        return a + b;
+    }
+}
