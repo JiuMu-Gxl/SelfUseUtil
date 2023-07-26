@@ -27,7 +27,7 @@ namespace SpiderDemo
             AddDataFlow(new ConsoleStorage());
 
             List<string> urlList = new List<string>();
-            for (int i = 1; i < 11; i++)
+            for (int i = 1; i < 2; i++)
             {
                 urlList.Add($"https://www.cnblogs.com/sitehome/p/{i}");
             }
