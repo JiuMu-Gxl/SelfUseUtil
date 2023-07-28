@@ -2,11 +2,12 @@
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 
-namespace SelfUseUtil
+namespace SelfUseUtil.Demo
 {
     public static class ExportWord
     {
-        public static void Export() {
+        public static void Export()
+        {
             if (File.Exists("copy.docx"))
             {
                 File.Delete("copy.docx");
@@ -161,4 +162,4 @@ namespace SelfUseUtil
             return elment;
         }
     }
-}  
+}

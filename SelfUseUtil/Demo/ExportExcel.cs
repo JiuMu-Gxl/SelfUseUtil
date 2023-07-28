@@ -7,11 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SelfUseUtil
+namespace SelfUseUtil.Demo
 {
     public class ExportExcel
     {
-        public async Task Export() {
+        public async Task Export()
+        {
             List<ExcelColumn> secCol = new List<ExcelColumn>();
             secCol.Add(new ExcelColumn() { ColumnField = "WorkNo", ColumnName = "序号" });
             secCol.Add(new ExcelColumn() { ColumnField = "DoctorName", ColumnName = "医生姓名" });
@@ -39,7 +40,7 @@ namespace SelfUseUtil
             var content = ExcelHelper.CreateMultiHeaderTable(new List<ExcelSheetColumnData<DiseaseDoctorResultDto>> { column }, 1, 1);
 
             // 获取桌面地址
-            string desktopPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
             using FileStream fileStream = new FileStream($"{desktopPath}/123.xlsx", FileMode.Create, FileAccess.Write);
             await fileStream.WriteAsync(content, 0, content.Length);

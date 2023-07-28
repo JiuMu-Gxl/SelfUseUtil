@@ -4,7 +4,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using System.Data;
 using System.Text.RegularExpressions;
 
-namespace SelfUseUtil
+namespace SelfUseUtil.Demo
 {
     public class OpenXmlExportExcel
     {
@@ -64,7 +64,7 @@ namespace SelfUseUtil
                     sheets.Append(sheet);
 
                     Row headerRow = new Row();
-                    List<String> columns = new List<string>();
+                    List<string> columns = new List<string>();
                     foreach (DataColumn column in item.DataTable.Columns)
                     {
                         columns.Add(column.ColumnName);
@@ -79,7 +79,7 @@ namespace SelfUseUtil
                     foreach (DataRow dsrow in item.DataTable.Rows)
                     {
                         Row newRow = new Row();
-                        foreach (String col in columns)
+                        foreach (string col in columns)
                         {
                             Cell cell = new Cell();
                             cell.DataType = CellValues.String;
@@ -91,7 +91,7 @@ namespace SelfUseUtil
                     }
                     workbookPart.Workbook.Save();
                 }
-                
+
             }
             stream.Seek(0, SeekOrigin.Begin);
             return stream;
@@ -118,7 +118,7 @@ namespace SelfUseUtil
         }
 
         //createFont 返回的是一个Uint32Value  记录该样式索引号
-        private UInt32Value createFont(Stylesheet styleSheet, string fontName, Nullable<double> fontSize, bool isBold, System.Drawing.Color foreColor)
+        private UInt32Value createFont(Stylesheet styleSheet, string fontName, double? fontSize, bool isBold, System.Drawing.Color foreColor)
         {
             if (styleSheet.Fonts.Count == null)
             {
@@ -272,7 +272,8 @@ namespace SelfUseUtil
         }
     }
 
-    public class ExportExcelDataOutput {
+    public class ExportExcelDataOutput
+    {
         public string SheetName { get; set; }
         public DataTable DataTable { get; set; }
     }

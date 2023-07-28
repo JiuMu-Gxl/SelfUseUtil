@@ -5,11 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SelfUseUtil
+namespace SelfUseUtil.Demo
 {
     public class MoreThread
     {
-        public static void ParallelMoreThread() {
+        public static void ParallelMoreThread()
+        {
             var list = new List<int>();
             for (int i = 1; i <= 100; i++)
             {

@@ -6,11 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SelfUseUtil
+namespace SelfUseUtil.Demo
 {
     public static class CheckObjectType
     {
-        public static void Check() {
+        public static void Check()
+        {
             // 将 JSON 转换为对象
             var content = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
 

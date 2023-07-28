@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SelfUseUtil
+namespace SelfUseUtil.Demo
 {
-    public interface ITaskDispose {
+    public interface ITaskDispose
+    {
         Task StopTask();
     }
     public class TaskDispose : ITaskDispose
@@ -16,7 +17,8 @@ namespace SelfUseUtil
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task StopTask() {
+        public async Task StopTask()
+        {
             try
             {
                 //创建线程字典
