@@ -1,12 +1,10 @@
-﻿// See https://aka.ms/new-console-template for more information
-using SelfUseUtil.Helper;
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Security.Policy;
+﻿
+using MiniSqlParser;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NUnit.Framework;
+using SelfUseUtil;
+using SelfUseUtil.Demo;
+using static SelfUseUtil.Demo.CheckObjectType;
 
-
-object num = null;
-Console.WriteLine(Convert.ToDecimal(num ?? 0));
-Console.WriteLine((decimal)(num ?? 0m));
-
-
+Console.WriteLine(123);

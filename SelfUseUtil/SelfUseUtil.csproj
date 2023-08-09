@@ -10,8 +10,12 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
+    <PackageReference Include="Microsoft.SqlServer.Management.SqlParser" Version="170.9.0" />
+    <PackageReference Include="Microsoft.SqlServer.TransactSql.ScriptDom" Version="161.8901.0" />
+    <PackageReference Include="MiniSqlParser" Version="1.0.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NPOI" Version="2.6.0" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
   </ItemGroup>
 
 </Project>
