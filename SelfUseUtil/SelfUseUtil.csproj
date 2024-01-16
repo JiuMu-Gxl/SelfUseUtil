@@ -14,9 +14,11 @@
     </PackageReference>
     <PackageReference Include="Aspose.Words" Version="23.8.0" />
     <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="Core.Json" Version="3.1.9.12" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
     <PackageReference Include="DocX" Version="2.5.0" />
     <PackageReference Include="FluentFTP" Version="47.1.0" />
+    <PackageReference Include="FreeSql.Provider.ClickHouse" Version="3.2.809" />
     <PackageReference Include="Irony" Version="1.2.0" />
     <PackageReference Include="Microsoft.SqlServer.Management.SqlParser" Version="170.9.0" />
     <PackageReference Include="Microsoft.SqlServer.TransactSql.ScriptDom" Version="161.8901.0" />
@@ -25,6 +27,8 @@
     <PackageReference Include="NPOI" Version="2.6.0" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="ScottPlot" Version="4.1.67" />
+    <PackageReference Include="System.Data.Odbc" Version="8.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
 

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core.Json.Newtonsoft;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace SelfUseUtil.Helper
                 }
             };
 
-            var copyData = DeepCopyByBin(data);
+            var copyData = DeepCopyByJson(data);
             copyData.a = "10";
             copyData.d.a = "100";
             copyData.d.d.a = "1000";
@@ -45,6 +46,12 @@ namespace SelfUseUtil.Helper
             Console.WriteLine("------------------- data -------------------");
             Console.WriteLine(JsonConvert.SerializeObject(copyData));
             Console.WriteLine("--------------------------------------------");
+        }
+
+        public static T DeepCopyByJson<T>(T obj)
+        {
+            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(obj));
+            return obj.ToJson().ToObject<T>();
         }
 
         // 重新映射 可进行深拷贝
