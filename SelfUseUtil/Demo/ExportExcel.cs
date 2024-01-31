@@ -39,10 +39,7 @@ namespace SelfUseUtil.Demo
 
             var content = ExcelHelper.CreateMultiHeaderTable(new List<ExcelSheetColumnData<DiseaseDoctorResultDto>> { column }, 1, 1);
 
-            // 获取桌面地址
-            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-
-            using FileStream fileStream = new FileStream($"{desktopPath}/123.xlsx", FileMode.Create, FileAccess.Write);
+            using FileStream fileStream = new FileStream($"{ConstData.DesktopPath}/123.xlsx", FileMode.Create, FileAccess.Write);
             await fileStream.WriteAsync(content, 0, content.Length);
         }
     }

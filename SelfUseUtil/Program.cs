@@ -1,45 +1,46 @@
-﻿
+﻿using ScottPlot;
+using SelfUseUtil;
+using SelfUseUtil.Demo;
+using System.Drawing;
+using System.IO.Packaging;
 
-using ClickHouse.Client.ADO;
-using ClickHouse.Client.ADO.Parameters;
 
-string connectionString = "host=172.16.1.18;port=8123;database=mqm_test;user=default;password=123456789;compress=True;checkCompressedHash=False;compressor=lz4;";
+// 创建 ScottPlot 图表对象
+var plt = new Plot();
 
-// SQL 查询语句
-string sqlQuery = "select name as TableName, `comment` as TableComment from `system`.tables where database = @schema_name;";
-using (var connection = new ClickHouseConnection(connectionString))
-{
-    try
-    {
-        // 打开数据库连接
-        connection.Open();
 
-        // 创建命令对象
-        using (var command = connection.CreateCommand())
-        {
-            // 设置查询语句
-            command.CommandText = sqlQuery;
+// 添加一些示例数据
+double[] x = { 1, 2, 3, 4, 5 };
+double[] y1 = { 10, 20, 15, 30, 25 };
+double[] y2 = { 15, 25, 20, 35, 30 };
+double[] y3 = { 30, 30, 30, 30, 30 };
 
-            // 添加参数并设置参数值
-            command.Parameters.Add(new ClickHouseDbParameter { ParameterName = "schema_name", Value = "mqm_test" });
+var bar1 = plt.PlotFill(x, y3, baseline: 20, label: "国家线", fillColor: Color.FromArgb(20, 255, 0, 0));
 
-            // 执行查询并获取读取器
-            using (var reader = command.ExecuteReader())
-            {
-                // 遍历结果集
-                while (reader.Read())
-                {
-                    // 处理每一行数据
-                    Console.WriteLine($"{reader["TableName"]}, {reader["TableComment"]}");
-                }
-            }
-        }
-    }
-    catch (Exception ex)
-    {
-        // 处理连接或查询时发生的异常
-        Console.WriteLine($"Error: {ex.Message}");
-    }
-}
+// 添加折线图
+var line1 = plt.PlotScatter(x, y1, markerSize: 10, label: "线条1", lineStyle: LineStyle.Solid, color: Color.Blue);
+var line2 = plt.PlotScatter(x, y2, markerSize: 10, label: "线条2", lineStyle: LineStyle.Solid, color: Color.Orange);
+
+
+// 设置图表标题
+plt.Title("折线图示例");
+
+// 设置中文横轴标签
+plt.XTicks(x, new[] { "一", "二", "三", "四", "五" });
+
+// 显示图例
+plt.Legend();
+
+// 保存为图片文件
+string imagePath = $"{ConstData.DesktopPath}/LinePlot.png";
+plt.SaveFig(imagePath);
+
+Console.WriteLine($"折线图已保存到 {imagePath}");
+
+
+
+
+
+
 
 
