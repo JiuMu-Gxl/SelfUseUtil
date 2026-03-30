@@ -16,7 +16,7 @@ services.AddSwaggerGen();
 services.AddHangfire(configuration =>
 {
     configuration.UseConsole();
-    configuration.UseRedisStorage("172.16.127.100:34188,defaultDatabase=15,connectTimeout=100000,syncTimeout=100000,connectRetry=50", new RedisStorageOptions { Db = 10 });
+    configuration.UseRedisStorage("192.168.1.148:6379,defaultDatabase=15,connectTimeout=100000,syncTimeout=100000,connectRetry=50", new RedisStorageOptions { Db = 15 });
 });
 services.AddHangfireServer(option =>
 {

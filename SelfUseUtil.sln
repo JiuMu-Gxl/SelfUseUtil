@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.4.33205.214
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11304.174
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfUseUtil", "SelfUseUtil\SelfUseUtil.csproj", "{72BBA27F-254B-47B2-AB91-3ABDFD95A568}"
 EndProject
@@ -14,6 +14,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HangFire", "HangFire", "{09FE033D-9A21-46D4-B186-BCCC98917DE4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HangFire.Demo", "HangFire.Demo\HangFire.Demo.csproj", "{9F709FE2-6553-41B5-AFD9-BE512A606A23}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerService", "WorkerService\WorkerService.csproj", "{671C17B8-7585-4574-AC12-EC623F71A1F1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WorkerServices", "WorkerServices", "{247260B0-ABAA-4F51-A2A2-7C9BD9D126B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkService.MockApi", "WorkService.MockApi\WorkService.MockApi.csproj", "{FF5F58D5-6BEC-458C-B553-50967F24E278}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,12 +47,22 @@ Global
 		{9F709FE2-6553-41B5-AFD9-BE512A606A23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F709FE2-6553-41B5-AFD9-BE512A606A23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F709FE2-6553-41B5-AFD9-BE512A606A23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{671C17B8-7585-4574-AC12-EC623F71A1F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{671C17B8-7585-4574-AC12-EC623F71A1F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{671C17B8-7585-4574-AC12-EC623F71A1F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{671C17B8-7585-4574-AC12-EC623F71A1F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF5F58D5-6BEC-458C-B553-50967F24E278}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF5F58D5-6BEC-458C-B553-50967F24E278}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF5F58D5-6BEC-458C-B553-50967F24E278}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF5F58D5-6BEC-458C-B553-50967F24E278}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9F709FE2-6553-41B5-AFD9-BE512A606A23} = {09FE033D-9A21-46D4-B186-BCCC98917DE4}
+		{671C17B8-7585-4574-AC12-EC623F71A1F1} = {247260B0-ABAA-4F51-A2A2-7C9BD9D126B5}
+		{FF5F58D5-6BEC-458C-B553-50967F24E278} = {247260B0-ABAA-4F51-A2A2-7C9BD9D126B5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {329025FA-3912-438F-B52E-834AB35E760A}

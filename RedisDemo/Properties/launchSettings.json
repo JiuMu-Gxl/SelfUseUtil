@@ -8,7 +8,7 @@
       "applicationUrl": "http://localhost:5030;http://0.0.0.0:5030;",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "Redis:Connection": "172.16.127.100:34188,defaultDatabase=14,connectTimeout=100000,syncTimeout=100000,connectRetry=50"
+        "Redis:Connection": "192.168.1.148:6379,Password=abc-123,defaultDatabase=14,connectTimeout=100000,syncTimeout=100000,connectRetry=50"
       }
     }
   }

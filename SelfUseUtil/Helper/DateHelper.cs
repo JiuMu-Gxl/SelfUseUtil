@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SelfUseUtil.Helper
@@ -74,6 +75,85 @@ namespace SelfUseUtil.Helper
         {
             return (long)(value.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc))).TotalSeconds;
         }
+
+        /// <summary>
+        /// 将输入字符串所有非数字字符替换为 -
+        /// </summary>
+        public static string NormalizeDate(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return string.Empty;
+
+            input = Regex.Replace(input.Trim(), @"\D+", "-");
+            return input.Trim('-');
+        }
+
+        /// <summary>
+        /// 判断日期精度
+        /// </summary>
+        public static DatePrecision GetDatePrecision(string input)
+        {
+            input = NormalizeDate(input);
+
+            return input.Length switch
+            {
+                4 => DatePrecision.Year,
+                6 => DatePrecision.Month,
+                8 => DatePrecision.Day,
+                _ => input.Count(c => c == '-') switch
+                {
+                    1 => DatePrecision.Month,
+                    2 => DatePrecision.Day,
+                    _ => DatePrecision.Invalid
+                }
+            };
+        }
+
+        /// <summary>
+        /// 将字符串转换为 DateTime，支持选择起始时间或结束时间，精确到毫秒
+        /// </summary>
+        public static DateTime? ParseToDateTime(string input, bool endTime = false)
+        {
+            input = NormalizeDate(input);
+            var precision = GetDatePrecision(input);
+            if (precision == DatePrecision.Invalid)
+                return null;
+
+            try
+            {
+                // 统一处理紧凑格式（无 -）
+                if (precision == DatePrecision.Month && Regex.IsMatch(input, @"^\d{6}$"))
+                    input = $"{input.Substring(0, 4)}-{input.Substring(4, 2)}";
+                if (precision == DatePrecision.Day && Regex.IsMatch(input, @"^\d{8}$"))
+                    input = $"{input.Substring(0, 4)}-{input.Substring(4, 2)}-{input.Substring(6, 2)}";
+
+                // 拆分年月日
+                string[] parts = input.Split('-');
+                int year = int.Parse(parts[0]);
+                int month = parts.Length > 1 ? int.Parse(parts[1]) : 1;
+                int day = parts.Length > 2 ? int.Parse(parts[2]) : 1;
+
+                switch (precision)
+                {
+                    case DatePrecision.Year:
+                        return endTime
+                            ? new DateTime(year, 12, 31, 23, 59, 59, 999)
+                            : new DateTime(year, 1, 1, 0, 0, 0, 0);
+                    case DatePrecision.Month:
+                        if (endTime)
+                            day = DateTime.DaysInMonth(year, month);
+                        return new DateTime(year, month, day, endTime ? 23 : 0, endTime ? 59 : 0, endTime ? 59 : 0, endTime ? 999 : 0);
+                    case DatePrecision.Day:
+                        return new DateTime(year, month, day, endTime ? 23 : 0, endTime ? 59 : 0, endTime ? 59 : 0, endTime ? 999 : 0);
+                    default:
+                        return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 
     [Serializable]
@@ -96,5 +176,13 @@ namespace SelfUseUtil.Helper
         {
             return obj.ToJson().ToObject<DateDto>();
         }
+    }
+
+    public enum DatePrecision
+    {
+        Year,
+        Month,
+        Day,
+        Invalid
     }
 }

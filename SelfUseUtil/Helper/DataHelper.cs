@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SelfUseUtil.Helper
@@ -11,27 +12,19 @@ namespace SelfUseUtil.Helper
         /// <summary>
         /// 取小数，向下取整不四舍五入
         /// </summary>
-        /// <param name="d"></param>
-        /// <param name="n"></param>
-        /// <returns></returns>
         public static decimal CutDecimalWithN(decimal d, int n = 0)
         {
-            string strDecimal = d.ToString();
-            int index = strDecimal.IndexOf(".");
-            if (index == -1 || strDecimal.Length < index + n + 1)
-            {
-                strDecimal = string.Format("{0:F" + n + "}", d);
-            }
-            else
-            {
-                int length = index;
-                if (n != 0)
-                {
-                    length = index + n + 1;
-                }
-                strDecimal = strDecimal.Substring(0, length);
-            }
-            return decimal.Parse(strDecimal);
+            decimal factor = (decimal)Math.Pow(10, n);
+            return Math.Floor(d * factor) / factor;
+        }
+
+        /// <summary>
+        /// 取小数，向下取整不四舍五入
+        /// </summary>
+        public static decimal CutDecimal(this decimal d, int n = 0)
+        {
+            decimal factor = (decimal)Math.Pow(10, n);
+            return Math.Floor(d * factor) / factor;
         }
     }
 }
