@@ -66,7 +66,6 @@ builder.Services.AddSingleton<IDistributedCache>(
 );
 #endregion
 
-
 #region Refit
 var baseAddress = builder.Configuration["Refit:BaseAddress"] ?? "";
 builder.Services.AddTransient<LoggingHandler>();
@@ -89,7 +88,8 @@ builder.Services.Configure<WorkerOptions>(builder.Configuration.GetSection("Work
 // 订单补偿服务
 builder.Services.AddHostedService<OrderCompensateWorker>();
 // 锁单服务
-builder.Services.AddHostedService<OrderLockWorker>();
+//builder.Services.AddHostedService<OrderLockWorker>();
+builder.Services.AddHostedService<OrderNewLockWorker>();
 // 订单创建服务
 builder.Services.AddHostedService<OrderCreateWorker>();
 #endregion

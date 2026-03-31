@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Mono.TextTemplating;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -17,14 +18,14 @@ namespace WorkerService.Workers
     /// <summary>
     /// 锁单服务
     /// </summary>
-    public class OrderLockWorker : BackgroundService
+    public class OrderNewLockWorker : BackgroundService
     {
         private readonly WorkerOptions _options;
         private readonly IWebClient _api;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IRedisQueueService _redis;
 
-        public OrderLockWorker(
+        public OrderNewLockWorker(
             IOptionsMonitor<WorkerOptions> options, 
             IWebClient api, 
             IServiceScopeFactory scopeFactory, 
@@ -39,6 +40,7 @@ namespace WorkerService.Workers
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Log.Information("订单锁定服务已启动");
+
             var tasks = Enumerable.Range(0, _options.LockWorkerThreads)
                 .Select(_ => Task.Run(() => ConsumeAsync(stoppingToken), stoppingToken));
 
@@ -125,83 +127,129 @@ namespace WorkerService.Workers
             //    return;
             //}
 
-            // 查询第三方是否锁单
-            var result = await _api.Query(orderInfo.OrderNo);
-            if (result.Result == 2)
-            {
-                Log.Warning($"订单 {orderInfo.OrderNo} 锁单失败，{result.Message}");
-                await LockFail(db, orderInfo);
-                return;
-            }
-
             var order = await db.OrderTemps
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.OrderNo == orderInfo.OrderNo);
 
             if (order == null)
             {
-                Log.Warning($"订单不存在 {orderInfo.OrderNo}");
+                Log.Warning("订单不存在 {OrderNo}", orderInfo.OrderNo);
                 return;
             }
 
-            if (result.Result == 1)
+            switch (order.ProcessStatus)
             {
-                await UpdateSuccess(db, orderInfo.OrderNo);
-                Log.Information($"订单 {orderInfo.OrderNo} 已锁定");
-                return;
+                case ProcessStatus.Pending:
+                    await HandlePending(orderInfo, db);
+                    break;
+
+                case ProcessStatus.Locking:
+                    await HandleLocking(orderInfo, db);
+                    break;
+
+                case ProcessStatus.LockSuccess:
+                    await HandleLockSuccess(orderInfo, db);
+                    break;
+
+                case ProcessStatus.Creating:
+                    // 后续扩展（创建正式订单）
+                    Log.Information("订单创建中 {OrderNo}", orderInfo.OrderNo);
+                    break;
+
+                case ProcessStatus.Completed:
+                    // 终态
+                    Log.Information("订单已完成 {OrderNo}", orderInfo.OrderNo);
+                    break;
+
+                case ProcessStatus.Failed:
+                    // 终态
+                    Log.Warning("订单已失败 {OrderNo}", orderInfo.OrderNo);
+                    break;
+
+                default:
+                    Log.Warning("未知状态 {Status} - {OrderNo}", order.ProcessStatus, orderInfo.OrderNo);
+                    break;
             }
-            // 锁定中
-            if (order.ProcessStatus == ProcessStatus.Locking && result.Result == 0)
-            {
-                await RetryOrder(orderInfo, db);
+        }
+
+        private async Task HandlePending(OrderInRedisDto orderInfo, AppDbContext db)
+        {
+            // 防重复执行
+            var updated = await db.OrderTemps
+                .Where(x => x.OrderNo == orderInfo.OrderNo && x.ProcessStatus == ProcessStatus.Pending)
+                .ExecuteUpdateAsync(x => x
+                    .SetProperty(p => p.ProcessStatus, ProcessStatus.Locking)
+                    .SetProperty(p => p.UpdateTime, DateTime.UtcNow)
+                );
+
+            if (updated == 0)
                 return;
-            }
-            // 发起锁定
-            var details = await db.OrderDetailTemps.AsQueryable()
-                .Where(x => x.OrderNo == order.OrderNo)
-                .ToListAsync();
-            var orderdetails = await db.OrderDetails.AsQueryable()
-                .Where(x => x.OrderNo == order.OrderNo)
-                .ToListAsync();
 
             var lockResult = await _api.Lock(orderInfo.OrderNo);
 
             if (!lockResult.Success)
             {
-                Log.Warning($"订单 {orderInfo.OrderNo} 创建锁单失败：{result.Message}");
+                Log.Warning("订单 {OrderNo} 锁单失败：{Msg}", orderInfo.OrderNo, lockResult.Message);
                 await RetryOrder(orderInfo, db);
                 return;
             }
-            await SetLocking(db, orderInfo.OrderNo);
 
-            Log.Information($"订单 {orderInfo.OrderNo} 提交锁单成功 → 锁定中");
+            Log.Information("订单 {OrderNo} 已发起锁单", orderInfo.OrderNo);
 
             await RetryOrder(orderInfo, db);
         }
 
-        /// <summary>
-        /// 标记锁定成功
-        /// </summary>
-        private async Task UpdateSuccess(AppDbContext db, string orderNo)
+        private async Task HandleLocking(OrderInRedisDto orderInfo, AppDbContext db)
         {
-            await db.OrderTemps
-                .Where(x => x.OrderNo == orderNo)
-                .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(x => x.ProcessStatus, ProcessStatus.LockSuccess)
-                    .SetProperty(x => x.UpdateTime, DateTime.UtcNow)
-                );
+            var result = await _api.Query(orderInfo.OrderNo);
+
+            // 成功
+            if (result.Result == 1)
+            {
+                await db.OrderTemps
+                    .Where(x => x.OrderNo == orderInfo.OrderNo && x.ProcessStatus == ProcessStatus.Locking)
+                    .ExecuteUpdateAsync(x => x
+                        .SetProperty(p => p.ProcessStatus, ProcessStatus.LockSuccess)
+                        .SetProperty(p => p.UpdateTime, DateTime.UtcNow)
+                    );
+
+                Log.Information("订单锁定成功 {OrderNo}", orderInfo.OrderNo);
+                return;
+            }
+
+            // 失败
+            if (result.Result == 2)
+            {
+                await LockFail(db, orderInfo);
+                return;
+            }
+
+            // 继续轮询
+            await RetryOrder(orderInfo, db);
         }
 
-        /// <summary>
-        /// 标记锁定中
-        /// </summary>
-        private async Task SetLocking(AppDbContext db, string orderNo)
+        private async Task HandleLockSuccess(OrderInRedisDto orderInfo, AppDbContext db)
         {
+            // 更新为创建中（防止重复创建）
+            var updated = await db.OrderTemps
+                .Where(x => x.OrderNo == orderInfo.OrderNo && x.ProcessStatus == ProcessStatus.LockSuccess)
+                .ExecuteUpdateAsync(x => x
+                    .SetProperty(p => p.ProcessStatus, ProcessStatus.Creating)
+                    .SetProperty(p => p.UpdateTime, DateTime.UtcNow)
+                );
+
+            if (updated == 0)
+                return;
+
+            // TODO：创建正式订单（你后面加）
+            Log.Information("订单进入创建阶段 {OrderNo}", orderInfo.OrderNo);
+
+            // 模拟创建成功
             await db.OrderTemps
-                .Where(x => x.OrderNo == orderNo)
-                .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(x => x.ProcessStatus, ProcessStatus.Locking)
-                    .SetProperty(x => x.UpdateTime, DateTime.UtcNow)
+                .Where(x => x.OrderNo == orderInfo.OrderNo)
+                .ExecuteUpdateAsync(x => x
+                    .SetProperty(p => p.ProcessStatus, ProcessStatus.Completed)
+                    .SetProperty(p => p.UpdateTime, DateTime.UtcNow)
                 );
         }
 
