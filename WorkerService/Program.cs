@@ -77,9 +77,9 @@ builder.Services.AddRefitClient<IWebClient>()
     })
     .AddHttpMessageHandler<LoggingHandler>()
     .AddPolicyHandler(
-        HttpPolicyExtensions
-        .HandleTransientHttpError()
-        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2))
+        Policy<HttpResponseMessage>
+        .Handle<HttpRequestException>() // 只处理网络异常
+        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(1))
     );
 
 #endregion

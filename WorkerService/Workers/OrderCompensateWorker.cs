@@ -37,16 +37,15 @@ namespace WorkerService.Workers
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            using var scope = _scopeFactory.CreateScope();
+            var _redis = scope.ServiceProvider.GetRequiredService<IRedisQueueService>();
+            var _db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             Log.Information("订单补偿服务已启动");
-            //return;
+            return;
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
-                    using var scope = _scopeFactory.CreateScope();
-                    var _redis = scope.ServiceProvider.GetRequiredService<IRedisQueueService>();
-                    var _db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
                     Log.Information("开始执行订单补偿扫描");
                     int pageIndex = 1;
                     while (true)

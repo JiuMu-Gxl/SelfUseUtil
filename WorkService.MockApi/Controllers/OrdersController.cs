@@ -15,6 +15,21 @@ namespace WorkService.MockApi.Controllers
     public class OrdersController : ControllerBase
     {
         /// <summary>
+        /// 查询所有模拟规则
+        /// </summary>
+        [HttpGet("rules")]
+        public List<LockResult> GetAllRules()
+        {
+            return MockRuleStore.Rules
+                .Select(x => new LockResult
+                {
+                    No = x.Key,
+                    Mode = x.Value.ToString()
+                })
+                .ToList();
+        }
+
+        /// <summary>
         /// 设置模拟规则（用于测试不同场景，如总是成功、总是失败、永远不结束等）
         /// </summary>
         /// <param name="req"></param>
@@ -107,7 +122,7 @@ namespace WorkService.MockApi.Controllers
             {
                 OrderNo = orderNo,
                 Status = 0,
-                CreateTime = DateTime.Now,
+                CreateTime = DateTime.UtcNow,
                 DelaySeconds = delay,
                 FinalStatus = finalStatus,
                 NeverFinish = neverFinish
@@ -127,7 +142,7 @@ namespace WorkService.MockApi.Controllers
         /// <summary>
         /// 查询锁定状态
         /// </summary>
-        /// <param name="lockNo"></param>
+        /// <param name="orderNo"></param>
         /// <returns></returns>
         [HttpGet("query/{orderNo}")]
         public int Query(string orderNo)
@@ -149,7 +164,7 @@ namespace WorkService.MockApi.Controllers
             }
 
             // 判断是否到时间
-            var elapsed = (DateTime.Now - info.CreateTime).TotalSeconds;
+            var elapsed = (DateTime.UtcNow - info.CreateTime).TotalSeconds;
 
             if (info.Status == 0 && elapsed >= info.DelaySeconds)
             {
@@ -204,7 +219,59 @@ namespace WorkService.MockApi.Controllers
                 throw new Exception("创建订单失败");
             }
 
-            return "TP" + DateTime.Now.Ticks;
+            return "TP" + DateTime.UtcNow.Ticks;
+        }
+
+        /// <summary>
+        /// 清空所有第三方锁数据（测试用）
+        /// </summary>
+        [HttpGet("clear-all")]
+        public IActionResult ClearAll()
+        {
+            ThirdPartyStore.Locks.Clear();
+            ThirdPartyStore.OrderLocks.Clear();
+
+            return Ok(new
+            {
+                message = "已清空 ThirdPartyStore"
+            });
+        }
+
+        /// <summary>
+        /// 查询所有第三方锁信息（完整）
+        /// </summary>
+        [HttpGet("locks")]
+        public object GetAllLocks()
+        {
+            var list = ThirdPartyStore.OrderLocks
+                .Select(x =>
+                {
+                    var orderNo = x.Key;
+                    var lockNo = x.Value;
+
+                    ThirdPartyStore.Locks.TryGetValue(lockNo, out var info);
+
+                    return new
+                    {
+                        OrderNo = orderNo,
+                        LockNo = lockNo,
+                        Status = info?.Status,              // 0=处理中 1=成功 2=失败
+                        DelaySeconds = info?.DelaySeconds,
+                        FinalStatus = info?.FinalStatus,
+                        NeverFinish = info?.NeverFinish,
+                        CreateTime = info?.CreateTime,
+                        ElapsedSeconds = info == null
+                            ? (double?)null
+                            : (DateTime.UtcNow - info.CreateTime).TotalSeconds
+                    };
+                })
+                .ToList();
+
+            return new
+            {
+                Count = list.Count,
+                Items = list
+            };
         }
     }
 }

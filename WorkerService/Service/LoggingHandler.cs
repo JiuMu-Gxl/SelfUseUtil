@@ -2,6 +2,7 @@
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -15,7 +16,8 @@ namespace WorkerService.Service
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
-            var startTime = DateTime.UtcNow;
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            var startTime = DateTime.Now;
             string requestBody = string.Empty;
             string responseBody = string.Empty;
 
@@ -41,7 +43,7 @@ StartTime: {startTime:yyyy-MM-dd HH:mm:ss.fff}
                 if (response.Content != null)
                     responseBody = await response.Content.ReadAsStringAsync();
 
-                var endTime = DateTime.UtcNow;
+                var endTime = DateTime.Now;
                 var cost = (endTime - startTime).TotalMilliseconds;
 
                 Log.Information($"""
@@ -49,6 +51,7 @@ StartTime: {startTime:yyyy-MM-dd HH:mm:ss.fff}
 Url: {request.RequestUri}
 StatusCode: {(int)response.StatusCode}
 ResponseBody: {responseBody}
+StartTime: {startTime:yyyy-MM-dd HH:mm:ss.fff}
 EndTime: {endTime:yyyy-MM-dd HH:mm:ss.fff}
 Cost: {cost} ms
 ====================================================
@@ -69,12 +72,13 @@ Cost: {cost} ms
 
                     return newResponse;
                 }
-
+                stopwatch.Stop();
+                Log.Debug($"接口调用总耗时: {stopwatch.ElapsedMilliseconds} ms");
                 return response;
             }
             catch (Exception ex)
             {
-                var endTime = DateTime.UtcNow;
+                var endTime = DateTime.Now;
                 var cost = (endTime - startTime).TotalMilliseconds;
 
                 Log.Error($"""
@@ -96,6 +100,8 @@ Exception: {ex.Message}
                     Success = false
                 });
 
+                stopwatch.Stop();
+                Log.Debug($"接口调用总耗时: {stopwatch.ElapsedMilliseconds} ms");
                 return new HttpResponseMessage(HttpStatusCode.OK)
                 {
                     Content = new StringContent(errorContent, Encoding.UTF8, "application/json"),

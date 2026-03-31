@@ -11,6 +11,7 @@ using WorkerService.Dtos;
 namespace WorkerService.Service
 {
     public interface IRedisQueueService {
+        Task PushLockQueue(OrderInRedisDto order);
         Task PushLockQueueBatch(List<OrderInRedisDto> orders);
         Task<OrderInRedisDto> BLPopLockQueue();
         Task<bool> PushLockOrder(OrderInRedisDto order, int expireSeconds = -1);
@@ -19,6 +20,15 @@ namespace WorkerService.Service
 
     public class RedisQueueService : IRedisQueueService
     {
+        /// <summary>
+        /// 推送订单到库存锁定队列
+        /// 用于订单创建时进入库存锁定流程
+        /// </summary>
+        /// <param name="order">订单</param>
+        public async Task PushLockQueue(OrderInRedisDto order)
+        {
+            await RedisHelper.LPushAsync("queue:order:lock", order);
+        }
         /// <summary>
         /// 批量推送订单到库存锁定队列
         /// 用于订单创建时进入库存锁定流程
@@ -43,7 +53,7 @@ namespace WorkerService.Service
                 var json = RedisHelper.BLPop(1, "queue:order:lock");
                 if (json == null)
                 {
-                    Log.Warning($"Redis BLPop 为获取到内容");
+                    Log.Warning($"Redis BLPop 未获取到内容");
                     return null;
                 }
                 // 反序列化成对象
