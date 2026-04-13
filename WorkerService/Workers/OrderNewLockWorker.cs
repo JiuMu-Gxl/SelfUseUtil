@@ -244,13 +244,13 @@ namespace WorkerService.Workers
             // TODO：创建正式订单（你后面加）
             Log.Information("订单进入创建阶段 {OrderNo}", orderInfo.OrderNo);
 
-            // 模拟创建成功
-            await db.OrderTemps
-                .Where(x => x.OrderNo == orderInfo.OrderNo)
-                .ExecuteUpdateAsync(x => x
-                    .SetProperty(p => p.ProcessStatus, ProcessStatus.Completed)
-                    .SetProperty(p => p.UpdateTime, DateTime.UtcNow)
-                );
+            //// 模拟创建成功
+            //await db.OrderTemps
+            //    .Where(x => x.OrderNo == orderInfo.OrderNo)
+            //    .ExecuteUpdateAsync(x => x
+            //        .SetProperty(p => p.ProcessStatus, ProcessStatus.Completed)
+            //        .SetProperty(p => p.UpdateTime, DateTime.UtcNow)
+            //    );
         }
 
         /// <summary>
