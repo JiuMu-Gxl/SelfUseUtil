@@ -51,9 +51,9 @@ using BaiduMap = SelfUseUtil.BaiduMap;
 
 //Console.WriteLine($"折线图已保存到 {imagePath}");
 
-var start = new GeoPoint(115.636961, 33.140093);
-var end = new GeoPoint(115.885212, 32.911371);
-var codeType = "bd09ll";
+//var start = new GeoPoint(115.636961, 33.140093);
+//var end = new GeoPoint(115.885212, 32.911371);
+//var codeType = "bd09ll";
 
 //Console.WriteLine("----- 高德地图 -----");
 //var gaode = new AMap { AppKey = "c7591c54f7443323b41ec4c0f315acf5" };
@@ -104,13 +104,7 @@ var codeType = "bd09ll";
 //var text = "202513";
 //Console.WriteLine($"{text} → {DateHelper.ParseToDateTime(text)}");
 
-var count = 0;
-while (count < 10)
-{
-    Console.WriteLine($"第{count}次");
-    count++;
-}
-Console.WriteLine(count);
+
 
 
 
