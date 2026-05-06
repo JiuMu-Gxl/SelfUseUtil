@@ -9,7 +9,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.15" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.7" />
+		<PackageReference Include="MQTTnet" Version="5.1.0.1559" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 		<PackageReference Include="Caching.CSRedis" Version="3.8.807" />
 		<PackageReference Include="CSRedisCore" Version="3.8.807" />

@@ -1,11 +1,11 @@
 ﻿using WorkService.MockApi.Helper;
-using WorkService.MockApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WorkService.MockApi.Models.Mock;
 
 namespace WorkService.MockApi.Controllers
 {
