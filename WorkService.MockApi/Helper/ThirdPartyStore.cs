@@ -1,5 +1,5 @@
-﻿using WorkService.MockApi.Models;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
+using WorkService.MockApi.Models.Mock;
 
 namespace WorkService.MockApi.Helper
 {

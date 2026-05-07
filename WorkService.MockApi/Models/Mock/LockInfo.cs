@@ -1,7 +1,7 @@
 ﻿using WorkService.MockApi.Enums;
 using System;
 
-namespace WorkService.MockApi.Models
+namespace WorkService.MockApi.Models.Mock
 {
     public class LockInfo
     {

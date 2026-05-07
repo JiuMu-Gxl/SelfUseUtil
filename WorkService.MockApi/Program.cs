@@ -1,7 +1,12 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Redis;
 using System.Reflection;
 using WorkService.MockApi.Attributes;
+using WorkService.MockApi.Dtos.Iot;
+using WorkService.MockApi.Models;
+using WorkService.MockApi.Repositorys;
+using WorkService.MockApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +21,7 @@ builder.Services.AddControllers(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new() { Title = "订单模拟接口", Version = "v1" });
+    c.SwaggerDoc("v1", new() { Title = "模拟接口", Version = "v1" });
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
@@ -36,6 +41,23 @@ builder.Services.AddSingleton<IDistributedCache>(
     new CSRedisCache(RedisHelper.Instance)
 );
 #endregion
+
+#region PgSql
+builder.Services.AddDbContext<MqttDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("PgSql")));
+#endregion
+
+// Repository
+builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Service
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IMqttService, MqttService>();
+builder.Services.Configure<MqttOptions>(
+    builder.Configuration.GetSection("Mqtt"));
+
+
 
 var app = builder.Build();
 

@@ -14,16 +14,22 @@ namespace WorkService.MockApi.Attributes
         }
         public override void OnResultExecuting(ResultExecutingContext context)
         {
-            if (context.Result is ValidationFailedResult)
+            // ❗ 1. 非 ObjectResult 直接放行
+            if (context.Result is not ObjectResult objectResult)
             {
-                var objectResult = context.Result as ObjectResult;
-                context.Result = objectResult;
+                base.OnResultExecuting(context);
+                return;
             }
-            else
-            {
-                var objectResult = context.Result as ObjectResult;
-                context.Result = new OkObjectResult(new BaseResultModel(code: 200, result: objectResult.Value));
-            }
+
+            // ❗ 2. 防止 null Value
+            var value = objectResult.Value;
+
+            context.Result = new OkObjectResult(
+                new BaseResultModel(
+                    code: 200,
+                    result: value
+                )
+            );
         }
     }
 }
