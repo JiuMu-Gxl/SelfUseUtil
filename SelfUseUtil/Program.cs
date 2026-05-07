@@ -10,6 +10,8 @@ using SelfUseUtil;
 using SelfUseUtil.Demo;
 using SelfUseUtil.Helper;
 using SelfUseUtil.Model;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO.Packaging;
 using System.Management;
@@ -106,5 +108,39 @@ using BaiduMap = SelfUseUtil.BaiduMap;
 
 
 
+int total = 10_000_000; // 测试数量（可以改成 100万 / 500万）
+int parallel = Environment.ProcessorCount;
 
+Console.WriteLine($"开始测试，总数: {total}, 并发: {parallel}");
+
+var sw = Stopwatch.StartNew();
+
+var set = new ConcurrentDictionary<string, byte>();
+int duplicateCount = 0;
+
+Parallel.For(0, total, new ParallelOptions
+{
+    MaxDegreeOfParallelism = parallel
+}, i =>
+{
+    string code = InviteCodeGenerator.Generate(i);
+
+    if (!set.TryAdd(code, 0))
+    {
+        // 已存在 -> 重复
+        Interlocked.Increment(ref duplicateCount);
+    }
+});
+
+sw.Stop();
+
+int uniqueCount = set.Count;
+
+Console.WriteLine("========== 测试结果 ==========");
+Console.WriteLine($"生成总数: {total}");
+Console.WriteLine($"唯一数量: {uniqueCount}");
+Console.WriteLine($"重复数量: {duplicateCount}");
+Console.WriteLine($"重复率: {(double)duplicateCount / total:P6}");
+Console.WriteLine($"耗时: {sw.ElapsedMilliseconds} ms");
+Console.WriteLine($"QPS: {total / sw.Elapsed.TotalSeconds:F0}");
 
