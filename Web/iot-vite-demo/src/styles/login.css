@@ -1,0 +1,83 @@
+.page {
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 20px;
+}
+
+.glass-card {
+  width: 100%;
+  max-width: 420px;
+
+  padding: 40px 32px;
+
+  border-radius: 28px;
+
+  backdrop-filter: blur(22px);
+
+  background: rgba(255, 255, 255, 0.08);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.28);
+}
+
+.title-wrap {
+  text-align: center;
+
+  margin-bottom: 30px;
+}
+
+.title-wrap h1 {
+  color: white;
+
+  font-size: 30px;
+
+  margin-bottom: 10px;
+}
+
+.title-wrap p {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 20px;
+}
+
+.main-btn {
+  height: 48px;
+
+  border-radius: 14px;
+}
+
+.back-link {
+  text-align: center;
+
+  color: rgba(255, 255, 255, 0.85);
+}
+
+:deep(.el-input__wrapper) {
+  height: 48px;
+
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  box-shadow: none;
+}
+
+:deep(.el-input__inner) {
+  color: white;
+}
+
+:deep(.el-input__inner::placeholder) {
+  color: rgba(255, 255, 255, 0.45);
+}
