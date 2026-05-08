@@ -28,21 +28,21 @@ namespace WorkService.MockApi.Controllers.Iot
         public async Task<IActionResult> Publish([FromBody] PublishRequest req)
         {
             await _mqttService.PublishAsync(req.Topic, req.Payload);
-            return Ok(new { message = "发布成功" });
+            return Ok("发布成功");
         }
 
         [HttpGet("subscribe/{Topic}")]
         public async Task<IActionResult> Subscribe(string Topic)
         {
             await _mqttService.SubscribeAsync(Topic);
-            return Ok(new { message = "订阅成功" });
+            return Ok("订阅成功");
         }
 
         [HttpGet("disconnect/{Username}")]
         public async Task<IActionResult> Disconnect(string Username)
         {
             await _mqttService.DisconnectAsync(Username);
-            return Ok(new { message = "已断开连接" });
+            return Ok("已断开连接");
         }
     }
 }
